@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IGAN VNTG</title>
+  <meta name="description" content="Discover inventory from luxury consignment boutiques nationwide — all in one place." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;1,400&family=Helvetica+Neue:wght@300;400&family=DM+Sans:opsz,wght@9..40,200;9..40,300;9..40,400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f8f6f2;
+      --ink: #111010;
+      --ink-mid: #6a6763;
+      --ink-faint: #b0ada8;
+      --rule: #e2dfd9;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'DM Sans', 'Helvetica Neue', sans-serif;
+      font-weight: 300;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ── PAGE ── */
+    .page {
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: 48px 1fr 48px;
+      padding: 0;
+    }
+
+    /* ── TOP BAR ── */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+    }
+
+    .topbar-link {
+      font-size: 10px;
+      font-weight: 300;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--ink-mid);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .topbar-link:hover { color: var(--ink); }
+
+    /* ── CENTER ── */
+    .center {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 40px 24px;
+    }
+
+    .logo {
+      font-family: 'DM Sans', 'Helvetica Neue', sans-serif;
+      font-weight: 300;
+      font-size: clamp(28px, 6vw, 64px);
+      letter-spacing: 0.28em;
+      color: var(--ink);
+      text-transform: uppercase;
+      margin-bottom: 28px;
+      line-height: 1;
+    }
+
+    .tagline {
+      font-family: 'EB Garamond', Georgia, serif;
+      font-weight: 400;
+      font-style: italic;
+      font-size: clamp(13px, 1.8vw, 17px);
+      letter-spacing: 0.03em;
+      color: var(--ink-mid);
+      max-width: 440px;
+      line-height: 1.65;
+      margin-bottom: 36px;
+    }
+
+    .action-link {
+      font-size: 10px;
+      font-weight: 300;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--ink);
+      text-decoration: none;
+      border-bottom: 1px solid var(--ink);
+      padding-bottom: 2px;
+      transition: color 0.2s, border-color 0.2s;
+      cursor: pointer;
+      background: none;
+      border-top: none;
+      border-left: none;
+      border-right: none;
+      font-family: inherit;
+    }
+    .action-link:hover {
+      color: var(--ink-mid);
+      border-color: var(--ink-mid);
+    }
+
+    /* ── BOTTOM BAR ── */
+    .bottombar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 32px;
+      gap: 32px;
+    }
+
+    .social-placeholder {
+      font-size: 9px;
+      font-weight: 300;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .social-placeholder:hover { color: var(--ink-mid); }
+
+    /* ── OVERLAY BASE ── */
+    .overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 100;
+      flex-direction: column;
+    }
+    .overlay.open { display: flex; }
+
+    .overlay-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      height: 48px;
+      flex-shrink: 0;
+    }
+
+    .overlay-label {
+      font-size: 10px;
+      font-weight: 300;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--ink-mid);
+    }
+
+    .close-btn {
+      font-size: 10px;
+      font-weight: 300;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--ink-mid);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      transition: color 0.2s;
+      padding: 0;
+    }
+    .close-btn:hover { color: var(--ink); }
+
+    .overlay-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 24px 80px;
+    }
+
+    .overlay-title {
+      font-family: 'DM Sans', 'Helvetica Neue', sans-serif;
+      font-weight: 300;
+      font-size: 11px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--ink);
+      margin-bottom: 52px;
+    }
+
+    /* ── FORM ── */
+    .lux-form {
+      width: 100%;
+      max-width: 360px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      border-bottom: 1px solid var(--rule);
+      padding: 14px 0;
+      position: relative;
+    }
+    .field:first-child { border-top: 1px solid var(--rule); }
+
+    .field label {
+      font-size: 8px;
+      font-weight: 300;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      margin-bottom: 6px;
+    }
+
+    .field input,
+    .field textarea {
+      background: none;
+      border: none;
+      outline: none;
+      font-family: 'DM Sans', 'Helvetica Neue', sans-serif;
+      font-weight: 300;
+      font-size: 14px;
+      letter-spacing: 0.03em;
+      color: var(--ink);
+      width: 100%;
+      resize: none;
+    }
+    .field input::placeholder,
+    .field textarea::placeholder {
+      color: var(--rule);
+    }
+
+    .form-submit-row {
+      margin-top: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .submit-link {
+      font-size: 10px;
+      font-weight: 300;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--ink);
+      background: none;
+      border: none;
+      border-bottom: 1px solid var(--ink);
+      padding-bottom: 2px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .submit-link:hover {
+      color: var(--ink-mid);
+      border-color: var(--ink-mid);
+    }
+
+    .form-note {
+      font-family: 'EB Garamond', Georgia, serif;
+      font-style: italic;
+      font-size: 11px;
+      color: var(--ink-faint);
+    }
+
+    /* ── BOUTIQUE EXTRA ── */
+    .boutique-email {
+      margin-top: 52px;
+      font-family: 'EB Garamond', Georgia, serif;
+      font-style: italic;
+      font-size: 13px;
+      color: var(--ink-mid);
+      letter-spacing: 0.04em;
+      text-align: center;
+    }
+    .boutique-email a {
+      color: inherit;
+      text-decoration: none;
+      border-bottom: 1px solid var(--rule);
+      padding-bottom: 1px;
+      transition: border-color 0.2s;
+    }
+    .boutique-email a:hover { border-color: var(--ink-mid); }
+
+    /* ── SUCCESS STATE ── */
+    .form-success {
+      display: none;
+      text-align: center;
+    }
+    .form-success p {
+      font-family: 'EB Garamond', Georgia, serif;
+      font-style: italic;
+      font-size: clamp(22px, 3vw, 32px);
+      color: var(--ink-mid);
+      line-height: 1.4;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 480px) {
+      .topbar { padding: 0 20px; }
+      .bottombar { padding: 0 20px; }
+      .overlay-topbar { padding: 0 20px; }
+      .logo { letter-spacing: 0.18em; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <button class="topbar-link action-link" onclick="openOverlay('boutiques')">Boutiques</button>
+    <span></span>
+  </div>
+
+  <!-- CENTER -->
+  <div class="center">
+    <div class="logo">IGAN VNTG</div>
+    <p class="tagline">
+      discover inventory from luxury consignment boutiques nationwide — all in one place.
+    </p>
+    <button class="action-link" onclick="openOverlay('waitlist')">Join Waitlist</button>
+  </div>
+
+  <!-- BOTTOM BAR -->
+  <div class="bottombar">
+    <a class="social-placeholder" href="https://www.instagram.com/iganvntg?utm_source=qr" target="_blank" rel="noopener">Instagram</a>
+    <a class="social-placeholder" href="https://www.tiktok.com/@iganvntg?_r=1&_t=ZS-96h1IulHsWH" target="_blank" rel="noopener">TikTok</a>
+  </div>
+
+</div>
+
+
+<!-- WAITLIST OVERLAY -->
+<div class="overlay" id="overlay-waitlist">
+  <div class="overlay-topbar">
+    <span class="overlay-label">Waitlist</span>
+    <button class="close-btn" onclick="closeOverlay('waitlist')">Close</button>
+  </div>
+  <div class="overlay-body">
+    <p class="overlay-title">IGAN VNTG</p>
+
+    <form class="lux-form" id="waitlistForm" novalidate>
+      <div class="field">
+        <label for="w-name">Full Name</label>
+        <input type="text" id="w-name" name="name" placeholder="Your name" autocomplete="name" required />
+      </div>
+      <div class="field">
+        <label for="w-email">Email</label>
+        <input type="email" id="w-email" name="email" placeholder="your@email.com" autocomplete="email" required />
+      </div>
+      <div class="field">
+        <label for="w-phone">Phone Number</label>
+        <input type="tel" id="w-phone" name="phone" placeholder="+1 000 000 0000" autocomplete="tel" />
+      </div>
+      <div class="form-submit-row">
+        <button type="submit" class="submit-link">Request Access</button>
+        <span class="form-note">Canada-wide launch</span>
+      </div>
+    </form>
+
+    <div class="form-success" id="waitlist-success">
+      <p>You're on the list.<br>We'll be in touch.</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- BOUTIQUE OVERLAY -->
+<div class="overlay" id="overlay-boutiques">
+  <div class="overlay-topbar">
+    <span class="overlay-label">For Boutiques</span>
+    <button class="close-btn" onclick="closeOverlay('boutiques')">Close</button>
+  </div>
+  <div class="overlay-body">
+    <p class="overlay-title">Become a Launch Partner</p>
+
+    <form class="lux-form" id="boutiqueForm" novalidate>
+      <div class="field">
+        <label for="b-store">Store Name</label>
+        <input type="text" id="b-store" name="store_name" placeholder="Your boutique" required />
+      </div>
+      <div class="field">
+        <label for="b-web">Website</label>
+        <input type="url" id="b-web" name="website" placeholder="yourstore.com" />
+      </div>
+      <div class="field">
+        <label for="b-ig">Instagram</label>
+        <input type="text" id="b-ig" name="instagram" placeholder="@handle" />
+      </div>
+      <div class="field">
+        <label for="b-contact">Contact Name</label>
+        <input type="text" id="b-contact" name="contact_name" placeholder="Your name" required />
+      </div>
+      <div class="field">
+        <label for="b-email">Email</label>
+        <input type="email" id="b-email" name="email" placeholder="your@email.com" required />
+      </div>
+      <div class="form-submit-row">
+        <button type="submit" class="submit-link">Submit</button>
+      </div>
+    </form>
+
+    <div class="form-success" id="boutique-success">
+      <p>Thank you.<br>We'll reach out soon.</p>
+    </div>
+
+    <p class="boutique-email">
+      or reach us at <a href="mailto:iganvntg@gmail.com">iganvntg@gmail.com</a>
+    </p>
+  </div>
+</div>
+
+
+<script>
+  function openOverlay(id) {
+    document.getElementById('overlay-' + id).classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeOverlay(id) {
+    document.getElementById('overlay-' + id).classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  // Close on Escape
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.overlay.open').forEach(o => o.classList.remove('open'));
+      document.body.style.overflow = '';
+    }
+  });
+
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxe9OHdH3VLPM-R7zmLSPObjkpaZ3wNefgAmHviX2L3sgcf1MlEmpp9Sh0zs_-H-J_I/exec';
+
+  // Waitlist
+  document.getElementById('waitlistForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const btn = this.querySelector('.submit-link');
+    btn.textContent = 'Sending...';
+    btn.disabled = true;
+    fetch(SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        source: 'waitlist',
+        name: this.name.value,
+        email: this.email.value,
+        phone: this.phone.value
+      })
+    }).finally(() => {
+      this.style.display = 'none';
+      document.getElementById('waitlist-success').style.display = 'block';
+    });
+  });
+
+  // Boutique
+  document.getElementById('boutiqueForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const btn = this.querySelector('.submit-link');
+    btn.textContent = 'Sending...';
+    btn.disabled = true;
+    fetch(SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        source: 'boutique',
+        store: this.store_name.value,
+        website: this.website.value,
+        instagram: this.instagram.value,
+        contact: this.contact_name.value,
+        email: this.email.value
+      })
+    }).finally(() => {
+      this.style.display = 'none';
+      document.getElementById('boutique-success').style.display = 'block';
+    });
+  });
+</script>
+</body>
+</html>
